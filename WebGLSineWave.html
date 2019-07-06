@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Materials, light and animation</title>
+    <script type="text/javascript" src="jsLibs/three.js"></script>
+    <script type="text/javascript" src="jsLibs/stats.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="WebGL-output">
+</div>
+
+<script type="text/javascript">
+    function init() {
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMapEnabled = true;
+        var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+        var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.9});
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.x = 15;
+        plane.position.y = 0;
+        plane.position.z = 0;
+        scene.add(plane);
+		var cur_x = [];
+		var cur_y = [];
+        var step = 0;
+		var amp = 10;
+		geometry = new THREE.Geometry();
+		for(var i = 0; step <= 4 * Math.PI; i++) {
+			//cur_x[i] = step / (2 * Math.PI);
+			cur_x[i] = step;
+			cur_y[i] = amp * Math.sin(step);
+			step += 0.04;
+			geometry.vertices.push(new THREE.Vector3(cur_x[i], cur_y[i], 0));
+		}
+		material = new THREE.LineBasicMaterial( 
+			{ color: 0x0000ff, linewidth: 5 }
+		);
+		line = new THREE.Line(geometry, material);
+		scene.add(line);
+        camera.position.x = 10;
+        camera.position.y = 10;
+        camera.position.z = 50;
+        camera.lookAt(scene.position);
+        var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+        scene.add(ambientLight);
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-40, 60, -10);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+        document.getElementById("WebGL-output").appendChild(renderer.domElement);
+		var prev_x;
+		var prev_y;
+		var cnt = 0;
+        renderScene();
+        function renderScene() {
+            step += 0.04;
+			prev_x = cur_x;
+			prev_y = cur_y;
+			cur_x = step / (2 * Math.PI);
+			cur_y = amp * Math.sin(step);
+			//geometry.vertices.push(new THREE.Vector3(prev_x, prev_y, 0));
+			//geometry.vertices.push(new THREE.Vector3(cur_x, cur_y, 0));
+			//geometry.faces.push(new THREE.Face2(cnt, cnt + 1));
+			//cnt++;
+			//geometry = new THREE.Vector3(prev_x, prev_y, 0);
+			//geometry = new THREE.Vector3(cur_x, cur_y, 0);
+            requestAnimationFrame(renderScene);
+            renderer.render(scene, camera);
+        }
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
