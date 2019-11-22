@@ -5,7 +5,6 @@
 <head>
     <title>Materials, light and animation</title>
     <script type="text/javascript" src="jsLibs/three.js"></script>
-    <script type="text/javascript" src="jsLibs/stats.js"></script>
     <style>
         body {
             margin: 0;
@@ -26,25 +25,34 @@
 
 <script type="text/javascript">
     function init() {
+		// 월드 구성
         var scene = new THREE.Scene();
+		// 카메라 원근 설정
         var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+		// 렌더러 생성
         var renderer = new THREE.WebGLRenderer();
+		// 배경색 지정
         renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMapEnabled = true;
+		// 직사각형 생성
         var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
         var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.9});
         var plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
+		// -90 도 회전에 평행 이동
         plane.rotation.x = -0.5 * Math.PI;
         plane.position.x = 15;
         plane.position.y = 0;
         plane.position.z = 0;
+		// 월드에 추가
         scene.add(plane);
 		var cur_x = [];
 		var cur_y = [];
         var step = 0;
 		var amp = 10;
+		// 구간을 짧게 잡고 작은 선들을 함수 구간별로 그리면
+		// 이것은 곧 직선 혹은 곡선이 될 것이다.
 		geometry = new THREE.Geometry();
 		for(var i = 0; step <= 4 * Math.PI; i++) {
 			//cur_x[i] = step / (2 * Math.PI);
@@ -58,34 +66,23 @@
 		);
 		line = new THREE.Line(geometry, material);
 		scene.add(line);
+		// 카메라가 바라보는 위치 설정
         camera.position.x = 10;
         camera.position.y = 10;
         camera.position.z = 50;
         camera.lookAt(scene.position);
+		// 조명 설정(주변광)
         var ambientLight = new THREE.AmbientLight(0x0c0c0c);
         scene.add(ambientLight);
+		// 집중광 설정
         var spotLight = new THREE.SpotLight(0xffffff);
         spotLight.position.set(-40, 60, -10);
         spotLight.castShadow = true;
         scene.add(spotLight);
         document.getElementById("WebGL-output").appendChild(renderer.domElement);
-		var prev_x;
-		var prev_y;
-		var cnt = 0;
         renderScene();
+
         function renderScene() {
-            step += 0.04;
-			prev_x = cur_x;
-			prev_y = cur_y;
-			cur_x = step / (2 * Math.PI);
-			cur_y = amp * Math.sin(step);
-			//geometry.vertices.push(new THREE.Vector3(prev_x, prev_y, 0));
-			//geometry.vertices.push(new THREE.Vector3(cur_x, cur_y, 0));
-			//geometry.faces.push(new THREE.Face2(cnt, cnt + 1));
-			//cnt++;
-			//geometry = new THREE.Vector3(prev_x, prev_y, 0);
-			//geometry = new THREE.Vector3(cur_x, cur_y, 0);
-            requestAnimationFrame(renderScene);
             renderer.render(scene, camera);
         }
     }

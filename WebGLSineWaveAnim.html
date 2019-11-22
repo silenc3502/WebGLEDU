@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <html>
 
 <head>
     <title>Materials, light and animation</title>
     <script type="text/javascript" src="jsLibs/three.js"></script>
-    <script type="text/javascript" src="jsLibs/stats.js"></script>
     <style>
         body {
             margin: 0;
@@ -20,6 +19,35 @@
     </style>
 </head>
 <body>
+
+<div id="text-area">
+	<script type="text/javascript">
+		function get_period(coeff) {
+			return 2 * Math.PI / coeff;
+		}
+
+		function get_samples() {
+			var amp = 1.0;
+		}
+
+		document.write('전력 신호는 주기 적분의 결과가 0 보다 크며 수렴해야 한다.' + '<br/>');
+		document.write('에너지 신호는 무한대 적분(이상 적분)의 결과가 0 보다 크며 수렴해야 한다.' + '<br/>');
+		//var period = get_period(1);
+		//document.write('sin(x) 의 주기는 ',period,' 이다.' + <br/>');
+
+		/*
+		function rms_calc(signal, period) {
+			var dx = 0.0001;
+			var sum = 0;
+			var x = 0;
+
+			for(var i = 0; x <= period; i++, x += dx) {
+				sum += dx * signal;
+			}
+		}
+	*/
+	</script>
+</div>
 
 <div id="WebGL-output">
 </div>
@@ -74,6 +102,7 @@
 		var cnt = 0;
         renderScene();
         function renderScene() {
+			// 전체 구간을 0.04 의 step 마다 0.5 씩 밀어내므로 파형이 이동하는 것 처럼 보임
             step += 0.04;
 			line.position.x += 0.5;
 			if(step > 2 * Math.PI) {
